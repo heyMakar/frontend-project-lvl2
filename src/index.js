@@ -15,27 +15,26 @@ const genDiff = (firstFile, secondFile) => {
   const firstKeys = Object.keys(parseFirst);
   const secondKeys = Object.keys(parseSecond);
   const uniq = union(firstKeys, secondKeys);
-  const result = [];
-  const mapped = uniq.map((key) => {
+  const mapped = uniq.reduce((acc, key) => {
     const firstValue = parseFirst[key];
     const secondValue = parseSecond[key];
     if (has(parseFirst, key) && has(parseSecond, key) && firstValue === secondValue) {
-      result.push(`  ${key}: ${firstValue}`);
+      return [...acc, `  ${key}: ${firstValue}`];
     }
     if (has(parseFirst, key) && has(parseSecond, key) && firstValue !== secondValue) {
-      result.push(`+ ${key}: ${secondValue}`);
-      result.push(`- ${key}: ${firstValue}`);
+      return [...acc, `+ ${key}: ${secondValue}`, `- ${key}: ${firstValue}`];
     }
     if (!has(parseFirst, key) && has(parseSecond, key)) {
-      result.push(`+ ${key}: ${secondValue}`);
+      return [...acc, `+ ${key}: ${secondValue}`];
     }
     if (has(parseFirst, key) && !has(parseSecond, key)) {
-      result.push(`- ${key}: ${firstValue}`);
+      return [...acc, `- ${key}: ${firstValue}`];
     }
-  });
-  result.unshift('{');
-  result.push('}');
-  return result.join('\n');
+    return acc;
+  }, []);
+  mapped.unshift('{');
+  mapped.push('}');
+  return mapped.join('\n');
 };
 
 export default genDiff;
