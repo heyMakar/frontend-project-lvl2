@@ -1,8 +1,8 @@
 import fs from 'fs';
 import path from 'path';
-import { union, has } from 'lodash';
+import { union, has, keys } from 'lodash';
 
-export const parseFile = (fileName) => {
+const parseFile = (fileName) => {
   const pathToFile = path.resolve(fileName);
   const read = fs.readFileSync(pathToFile);
   const parse = JSON.parse(read);
@@ -12,9 +12,7 @@ export const parseFile = (fileName) => {
 const genDiff = (firstFile, secondFile) => {
   const parseFirst = parseFile(firstFile);
   const parseSecond = parseFile(secondFile);
-  const firstKeys = Object.keys(parseFirst);
-  const secondKeys = Object.keys(parseSecond);
-  const uniq = union(firstKeys, secondKeys);
+  const uniq = union(keys(parseFirst), keys(parseSecond));
   const mapped = uniq.reduce((acc, key) => {
     const firstValue = parseFirst[key];
     const secondValue = parseSecond[key];
@@ -27,10 +25,7 @@ const genDiff = (firstFile, secondFile) => {
     if (!has(parseFirst, key) && has(parseSecond, key)) {
       return [...acc, `+ ${key}: ${secondValue}`];
     }
-    if (has(parseFirst, key) && !has(parseSecond, key)) {
-      return [...acc, `- ${key}: ${firstValue}`];
-    }
-    return acc;
+    return [...acc, `- ${key}: ${firstValue}`];
   }, []);
   mapped.unshift('{');
   mapped.push('}');
