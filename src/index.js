@@ -1,12 +1,13 @@
 import { union, has, keys } from 'lodash';
 import path from 'path';
-import parseFile from './parsers';
+import fs from 'fs';
+import parse from './parsers';
+
+const parseObject = (toObjectPath) => parse(fs.readFileSync(toObjectPath, 'utf-8'), path.extname(toObjectPath));
 
 const genDiff = (firstFile, secondFile) => {
-  const getTypeFirst = path.extname(firstFile);
-  const getTypeSecond = path.extname(secondFile);
-  const parseFirst = parseFile(firstFile, getTypeFirst);
-  const parseSecond = parseFile(secondFile, getTypeSecond);
+  const parseFirst = parseObject(firstFile);
+  const parseSecond = parseObject(secondFile);
   const uniq = union(keys(parseFirst), keys(parseSecond));
   const mapped = uniq.reduce((acc, key) => {
     const firstValue = parseFirst[key];
@@ -26,5 +27,6 @@ const genDiff = (firstFile, secondFile) => {
   mapped.push('}');
   return mapped.join('\n');
 };
+
 
 export default genDiff;

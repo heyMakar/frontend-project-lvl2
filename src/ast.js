@@ -5,7 +5,7 @@ import {
 } from 'lodash';
 import parser from './parsers';
 
-const parseObject = (toObjectPath) => parser(fs.readFileSync(toObjectPath, 'utf-8'), path.extname(toObjectPath));
+const parseObject = (pathToObject) => parser(fs.readFileSync(pathToObject, 'utf-8'), path.extname(pathToObject));
 
 const getStatus = (before, after, key) => {
   if (has(before, key) && !has(after, key)) {
@@ -46,11 +46,11 @@ const buildAST = (before, after) => {
   const beforeFile = parseObject(before);
   const afterFile = parseObject(after);
   const getAstState = (first, second) => {
-    const uniqKeys = union(keys(first), keys(second));
+    const uniqKeys = union(keys(first), keys(second)).sort();
     return uniqKeys.reduce((acc, key) => {
       const status = getStatus(first, second, key);
-      const processedChildrens = getStatus(first, second, key) === 'nested'
-        ? getAstState(first[key], second[key]) : null;
+      const processedChildrens = status === 'nested'
+        ? getAstState(first[key], second[key]) : [];
       return [...acc,
         {
           key,
