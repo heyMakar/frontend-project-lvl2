@@ -23,11 +23,12 @@ const renderObject = (obj, depth = 0) => {
   } = obj;
   const childs = flatten(children);
   const breakLine = depth === 0 ? '' : '\n';
+  const currentValue = value[key];
   switch (status) {
     case 'added':
-      return `${breakLine}${indentPlacer(depth)}  + ${key}: ${stringify(value[key], depth * 2)}`;
+      return `${breakLine}${indentPlacer(depth)}  + ${key}: ${stringify(currentValue, depth * 2)}`;
     case 'removed':
-      return `${breakLine}${indentPlacer(depth)}  - ${key}: ${stringify(value[key], depth * 2)}`;
+      return `${breakLine}${indentPlacer(depth)}  - ${key}: ${stringify(currentValue, depth * 2)}`;
     case 'changed': {
       const { valueBefore, valueAfter } = value;
       const before = valueBefore[key];
@@ -37,7 +38,7 @@ const renderObject = (obj, depth = 0) => {
       return `${breakLine}${indentPlacer(depth)}  - ${key}: ${beforeToString}\n${indentPlacer(depth)}  + ${key}: ${afterToString}`;
     }
     case 'unchanged':
-      return `${breakLine}${indentPlacer(depth)}    ${key}: ${value[key]}`;
+      return `${breakLine}${indentPlacer(depth)}    ${key}: ${currentValue}`;
     case 'nested':
       return `${breakLine}${indentPlacer(depth)}    ${key}: {${childs.map((c) => renderObject(c, depth * 2)).join('')}${breakLine}${indentPlacer(depth)}    }`;
     default:
@@ -45,7 +46,7 @@ const renderObject = (obj, depth = 0) => {
   }
 };
 
-const render = (tree) => {
+const renderTree = (tree) => {
   const reducedTree = tree.reduce((acc, item) => {
     const childs = flatten(item.children);
     const depth = 1;
@@ -60,4 +61,4 @@ const render = (tree) => {
   return `{\n${reducedTree.join('\n')}\n}`;
 };
 
-export default render;
+export default renderTree;
