@@ -8,16 +8,20 @@ import parser from './parsers';
 const parseObject = (pathToObject) => parser(fs.readFileSync(pathToObject, 'utf-8'), path.extname(pathToObject));
 
 const getStatus = (before, after, key) => {
-  if (has(before, key) && !has(after, key)) {
+  const value1 = before[key];
+  const value2 = after[key];
+  const checkBeforeProperty = has(before, key);
+  const checkAfterProperty = has(after, key);
+  if (checkBeforeProperty && !checkAfterProperty) {
     return 'removed';
   }
-  if (!has(before, key) && has(after, key)) {
+  if (!checkBeforeProperty && checkAfterProperty) {
     return 'added';
   }
-  if (isObject(before[key]) && isObject(after[key])) {
+  if (isObject(value1) && isObject(value2)) {
     return 'nested';
   }
-  if (has(before, key) && has(after, key) && before[key] !== after[key]) {
+  if (checkBeforeProperty && checkAfterProperty && value1 !== value2) {
     return 'changed';
   }
   return 'unchanged';
