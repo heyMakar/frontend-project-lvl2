@@ -1,7 +1,5 @@
 import fs from 'fs';
-import buildAst from '../src/ast';
-import treeFormatRender from '../src/formatters/treeFormat';
-import plainFormatRender from '../src/formatters/plainFormat';
+import genDiff from '../src/index';
 
 const flatBeforeJson = `${__dirname}/__fixtures__/flatBefore.json`;
 const flatAfterJson = `${__dirname}/__fixtures__/flatAfter.json`;
@@ -15,27 +13,23 @@ const treeAfterIni = `${__dirname}/__fixtures__/treeAfter.ini`;
 const pathToFlatResult = `${__dirname}/__fixtures__/flatJson.txt`;
 const pathToTreeResult = `${__dirname}/__fixtures__/tree.txt`;
 const pathToPlainResult = `${__dirname}/__fixtures__/plain.txt`;
+
 const flatResult = fs.readFileSync(pathToFlatResult, 'utf-8');
 const treeResult = fs.readFileSync(pathToTreeResult, 'utf-8');
 const plainResult = fs.readFileSync(pathToPlainResult, 'utf-8');
 
-const astJson = buildAst(treeBeforeJson, treeAfterJson);
-const astYml = buildAst(treeBeforeYml, treeAfterYml);
-const astIni = buildAst(treeBeforeIni, treeAfterIni);
-
 test('make flat format diff', () => {
-  const astFromFlatFiles = buildAst(flatBeforeJson, flatAfterJson);
-  expect(treeFormatRender(astFromFlatFiles)).toEqual(flatResult);
+  expect(genDiff(flatBeforeJson, flatAfterJson)).toEqual(flatResult);
 });
 
 test('make tree format diff', () => {
-  expect(treeFormatRender(astJson)).toEqual(treeResult);
-  expect(treeFormatRender(astYml)).toEqual(treeResult);
-  expect(treeFormatRender(astIni)).toEqual(treeResult);
+  expect(genDiff(treeBeforeJson, treeAfterJson)).toEqual(treeResult);
+  expect(genDiff(treeBeforeYml, treeAfterYml)).toEqual(treeResult);
+  expect(genDiff(treeBeforeIni, treeAfterIni)).toEqual(treeResult);
 });
 
 test('make plain format diff', () => {
-  expect(plainFormatRender(astJson)).toEqual(plainResult);
-  expect(plainFormatRender(astYml)).toEqual(plainResult);
-  expect(plainFormatRender(astIni)).toEqual(plainResult);
+  expect(genDiff(treeBeforeJson, treeAfterJson, 'plain')).toEqual(plainResult);
+  expect(genDiff(treeBeforeYml, treeAfterYml, 'plain')).toEqual(plainResult);
+  expect(genDiff(treeBeforeIni, treeAfterIni, 'plain')).toEqual(plainResult);
 });
