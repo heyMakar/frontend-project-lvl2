@@ -1,11 +1,6 @@
-import path from 'path';
-import fs from 'fs';
 import {
   union, has, keys, isObject,
 } from 'lodash';
-import parser from './parsers';
-
-const parseObject = (pathToObject) => parser(fs.readFileSync(pathToObject, 'utf-8'), path.extname(pathToObject));
 
 const getStatus = (before, after, key) => {
   const value1 = before[key];
@@ -47,8 +42,6 @@ const getValueBasedOnStatus = (first, second, key) => {
 };
 
 const buildAST = (before, after) => {
-  const beforeFile = parseObject(before);
-  const afterFile = parseObject(after);
   const getAstState = (first, second) => {
     const uniqKeys = union(keys(first), keys(second)).sort();
     return uniqKeys.reduce((acc, key) => {
@@ -64,7 +57,7 @@ const buildAST = (before, after) => {
         }];
     }, []);
   };
-  const astState = getAstState(beforeFile, afterFile);
+  const astState = getAstState(before, after);
   return astState;
 };
 
