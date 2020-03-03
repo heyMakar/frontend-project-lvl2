@@ -1,6 +1,6 @@
 # frontend-project-lvl2
 
-[![Build Status](https://travis-ci.org/heyMakar/frontend-project-lvl2.svg?branch=master)](https://travis-ci.org/heyMakar/frontend-project-lvl2)
+![Node.js CI](https://github.com/heyMakar/frontend-project-lvl2/workflows/Node.js%20CI/badge.svg)
 
 [![Maintainability](https://api.codeclimate.com/v1/badges/dd91ab66ae68b02d2f57/maintainability)](https://codeclimate.com/github/heyMakar/frontend-project-lvl2/maintainability)
 
