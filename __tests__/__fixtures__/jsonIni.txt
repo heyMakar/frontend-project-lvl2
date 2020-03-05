@@ -1,0 +1,184 @@
+[
+  {
+    "key": "common",
+    "status": "nested",
+    "value": {},
+    "children": [
+      [
+        {
+          "key": "follow",
+          "status": "added",
+          "value": {
+            "follow": false
+          },
+          "children": [
+            []
+          ]
+        },
+        {
+          "key": "setting1",
+          "status": "unchanged",
+          "value": {
+            "setting1": "Value 1"
+          },
+          "children": [
+            []
+          ]
+        },
+        {
+          "key": "setting2",
+          "status": "removed",
+          "value": {
+            "setting2": "200"
+          },
+          "children": [
+            []
+          ]
+        },
+        {
+          "key": "setting3",
+          "status": "changed",
+          "value": {
+            "valueBefore": {
+              "setting3": true
+            },
+            "valueAfter": {
+              "setting3": {
+                "key": "value"
+              }
+            }
+          },
+          "children": [
+            []
+          ]
+        },
+        {
+          "key": "setting4",
+          "status": "added",
+          "value": {
+            "setting4": "blah blah"
+          },
+          "children": [
+            []
+          ]
+        },
+        {
+          "key": "setting5",
+          "status": "added",
+          "value": {
+            "setting5": {
+              "key5": "value5"
+            }
+          },
+          "children": [
+            []
+          ]
+        },
+        {
+          "key": "setting6",
+          "status": "nested",
+          "value": {},
+          "children": [
+            [
+              {
+                "key": "key",
+                "status": "unchanged",
+                "value": {
+                  "key": "value"
+                },
+                "children": [
+                  []
+                ]
+              },
+              {
+                "key": "ops",
+                "status": "added",
+                "value": {
+                  "ops": "vops"
+                },
+                "children": [
+                  []
+                ]
+              }
+            ]
+          ]
+        }
+      ]
+    ]
+  },
+  {
+    "key": "group1",
+    "status": "nested",
+    "value": {},
+    "children": [
+      [
+        {
+          "key": "baz",
+          "status": "changed",
+          "value": {
+            "valueBefore": {
+              "baz": "bas"
+            },
+            "valueAfter": {
+              "baz": "bars"
+            }
+          },
+          "children": [
+            []
+          ]
+        },
+        {
+          "key": "foo",
+          "status": "unchanged",
+          "value": {
+            "foo": "bar"
+          },
+          "children": [
+            []
+          ]
+        },
+        {
+          "key": "nest",
+          "status": "changed",
+          "value": {
+            "valueBefore": {
+              "nest": {
+                "key": "value"
+              }
+            },
+            "valueAfter": {
+              "nest": "str"
+            }
+          },
+          "children": [
+            []
+          ]
+        }
+      ]
+    ]
+  },
+  {
+    "key": "group2",
+    "status": "removed",
+    "value": {
+      "group2": {
+        "abc": "12345"
+      }
+    },
+    "children": [
+      []
+    ]
+  },
+  {
+    "key": "group3",
+    "status": "added",
+    "value": {
+      "group3": {
+        "fee": "100500"
+      }
+    },
+    "children": [
+      []
+    ]
+  }
+]
