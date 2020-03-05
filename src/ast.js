@@ -2,63 +2,63 @@ import {
   union, has, keys, isObject,
 } from 'lodash';
 
-const getStatus = (before, after, key) => {
-  const value1 = before[key];
-  const value2 = after[key];
-  const checkBeforeProperty = has(before, key);
-  const checkAfterProperty = has(after, key);
-  if (checkBeforeProperty && !checkAfterProperty) {
+const getStatus = (dataBefore, dataAfter, key) => {
+  const valueBefore = dataBefore[key];
+  const valueAfter = dataAfter[key];
+  const isValueBeforeExist = has(dataBefore, key);
+  const isValueAfterExist = has(dataAfter, key);
+  if (isValueBeforeExist && !isValueAfterExist) {
     return 'removed';
   }
-  if (!checkBeforeProperty && checkAfterProperty) {
+  if (!isValueBeforeExist && isValueAfterExist) {
     return 'added';
   }
-  if (isObject(value1) && isObject(value2)) {
+  if (isObject(valueBefore) && isObject(valueAfter)) {
     return 'nested';
   }
-  if (checkBeforeProperty && checkAfterProperty && value1 !== value2) {
+  if (isValueBeforeExist && isValueAfterExist && valueBefore !== valueAfter) {
     return 'changed';
   }
   return 'unchanged';
 };
 
-const getValueBasedOnStatus = (first, second, key) => {
-  const status = getStatus(first, second, key);
+const getValueBasedOnStatus = (data1, data2, key) => {
+  const status = getStatus(data1, data2, key);
   switch (status) {
     case 'removed':
-      return { [key]: first[key] };
+      return { [key]: data1[key] };
     case 'added':
-      return { [key]: second[key] };
+      return { [key]: data2[key] };
     case 'changed':
       return {
-        valueBefore: { [key]: first[key] },
-        valueAfter: { [key]: second[key] },
+        valueBefore: { [key]: data1[key] },
+        valueAfter: { [key]: data2[key] },
       };
     case 'unchanged':
-      return { [key]: first[key] };
+      return { [key]: data1[key] };
     default:
       return {};
   }
 };
 
-const buildAST = (before, after) => {
-  const getAstState = (first, second) => {
-    const uniqKeys = union(keys(first), keys(second)).sort();
+const astBuilder = (dataBefore, dataAfter) => {
+  const astBuild = (data1, data2) => {
+    const uniqKeys = union(keys(data1), keys(data2)).sort();
     return uniqKeys.reduce((acc, key) => {
-      const status = getStatus(first, second, key);
+      const status = getStatus(data1, data2, key);
       const processedChildrens = status === 'nested'
-        ? getAstState(first[key], second[key]) : [];
+        ? astBuild(data1[key], data2[key]) : [];
       return [...acc,
         {
           key,
           status,
-          value: getValueBasedOnStatus(first, second, key),
+          value: getValueBasedOnStatus(data1, data2, key),
           children: [processedChildrens],
         }];
     }, []);
   };
-  const astState = getAstState(before, after);
-  return astState;
+  const ast = astBuild(dataBefore, dataAfter);
+  return ast;
 };
 
-export default buildAST;
+export default astBuilder;

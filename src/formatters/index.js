@@ -1,6 +1,6 @@
-import tree from './treeFormat';
-import plain from './plainFormat';
-import json from './jsonFormat';
+import tree from './treeFormatter';
+import plain from './plainFormatter';
+import json from './jsonFormatter';
 
 const formats = {
   plain,

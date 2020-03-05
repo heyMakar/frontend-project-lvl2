@@ -9,10 +9,11 @@ const indentPlacer = (repeats) => {
 
 const stringify = (obj, depth) => {
   if (isObject(obj)) {
-    const key = keys(obj)[0];
-    const currentDepth = depth === 0 ? 2 : depth;
+    const firstKey = keys(obj)[0];
+    const nestedDepth = 2;
+    const currentDepth = depth === 0 ? nestedDepth : depth;
     const breakLine = currentDepth === 0 ? '' : '\n';
-    return `{${breakLine}${indentPlacer(currentDepth)}    ${key}: ${obj[key]}${breakLine}${indentPlacer(currentDepth)}}`;
+    return `{${breakLine}${indentPlacer(currentDepth)}    ${firstKey}: ${obj[firstKey]}${breakLine}${indentPlacer(currentDepth)}}`;
   }
   return obj;
 };
@@ -31,11 +32,15 @@ const renderObject = (obj, depth = 0) => {
       return `${breakLine}${indentPlacer(depth)}  - ${key}: ${stringify(currentValue, depth * 2)}`;
     case 'changed': {
       const { valueBefore, valueAfter } = value;
-      const before = valueBefore[key];
-      const after = valueAfter[key];
-      const beforeToString = isObject(before) ? stringify(before, depth * 2) : before;
-      const afterToString = isObject(after) ? stringify(after, depth * 2) : after;
-      return `${breakLine}${indentPlacer(depth)}  - ${key}: ${beforeToString}\n${indentPlacer(depth)}  + ${key}: ${afterToString}`;
+      const valueBeforeData = valueBefore[key];
+      const valueAfterData = valueAfter[key];
+
+      const beforeDataToString = isObject(valueBeforeData)
+        ? stringify(valueBeforeData, depth * 2) : valueBeforeData;
+      const afterDataToString = isObject(valueAfterData)
+        ? stringify(valueAfterData, depth * 2) : valueAfterData;
+
+      return `${breakLine}${indentPlacer(depth)}  - ${key}: ${beforeDataToString}\n${indentPlacer(depth)}  + ${key}: ${afterDataToString}`;
     }
     case 'unchanged':
       return `${breakLine}${indentPlacer(depth)}    ${key}: ${currentValue}`;
@@ -46,8 +51,8 @@ const renderObject = (obj, depth = 0) => {
   }
 };
 
-const renderTree = (tree) => {
-  const reducedTree = tree.reduce((acc, item) => {
+const renderTree = (items) => {
+  const processedItems = items.reduce((acc, item) => {
     const childs = flatten(item.children);
     const depth = 1;
     const depthStep = 1;
@@ -58,7 +63,7 @@ const renderTree = (tree) => {
     }
     return [...acc, renderObject(item)];
   }, []);
-  return `{\n${reducedTree.join('\n')}\n}`;
+  return `{\n${processedItems.join('\n')}\n}`;
 };
 
 export default renderTree;

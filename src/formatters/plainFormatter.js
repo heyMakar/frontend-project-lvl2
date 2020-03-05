@@ -1,8 +1,8 @@
 import { trim, isObject, flatten } from 'lodash';
 
-const complexValue = (value) => (isObject(value) ? '[complex value]' : value);
+const getComplexValue = (value) => (isObject(value) ? '[complex value]' : value);
 
-const renderPlain = (tree, path = '') => tree
+const renderPlain = (items, path = '') => items
   .filter((item) => item.status !== 'unchanged')
   .map(({
     key, value, status, children,
@@ -10,14 +10,14 @@ const renderPlain = (tree, path = '') => tree
     const nestedPath = `${path}.${key}`;
     switch (status) {
       case 'added':
-        return `Property ${trim(nestedPath, '.')} was added with value: ${complexValue(value[key])}`;
+        return `Property ${trim(nestedPath, '.')} was added with value: ${getComplexValue(value[key])}`;
       case 'removed':
         return `Property ${trim(nestedPath, '.')} was removed`;
       case 'changed': {
         const { valueBefore, valueAfter } = value;
-        const before = complexValue(valueBefore[key]);
-        const after = complexValue(valueAfter[key]);
-        return `Property ${trim(nestedPath, '.')} was changed from '${before}' to '${after}'`;
+        const processedValueBefore = getComplexValue(valueBefore[key]);
+        const processedValueAfter = getComplexValue(valueAfter[key]);
+        return `Property ${trim(nestedPath, '.')} was changed from '${processedValueBefore}' to '${processedValueAfter}'`;
       }
       case 'nested':
         return renderPlain(flatten(children), nestedPath);
