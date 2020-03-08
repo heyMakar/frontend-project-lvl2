@@ -8,9 +8,8 @@ const getFileExtension = (filename) => path.extname(filename);
 const readFile = (filename) => fs.readFileSync(filename, 'utf-8');
 
 const genDiff = (beforeFilePath, afterFilePath, outputFormat = 'tree') => {
-  const beforeFileExt = getFileExtension(beforeFilePath);
-  const afterFileExt = getFileExtension(afterFilePath);
-
+  const beforeFileExt = getFileExtension(beforeFilePath).slice(1);
+  const afterFileExt = getFileExtension(afterFilePath).slice(1);
   const dataBefore = readFile(beforeFilePath);
   const dataAfter = readFile(afterFilePath);
 
