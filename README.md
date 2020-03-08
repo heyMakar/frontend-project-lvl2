@@ -2,7 +2,8 @@
 ![Node.js CI](https://github.com/heyMakar/frontend-project-lvl2/workflows/Node.js%20CI/badge.svg) [![Maintainability](https://api.codeclimate.com/v1/badges/dd91ab66ae68b02d2f57/maintainability)](https://codeclimate.com/github/heyMakar/frontend-project-lvl2/maintainability) [![Test Coverage](https://api.codeclimate.com/v1/badges/dd91ab66ae68b02d2f57/test_coverage)](https://codeclimate.com/github/heyMakar/frontend-project-lvl2/test_coverage)
 
 ### Project info:
-Gendiff calculator is a CLI utility for compare two config files and show the difference between.
+Gendiff calculator is a second project, which i create while pass hexlet.io courses.
+This is a CLI utility for compare two config files and show the difference between.
 
 ### Setup:
 ```make install```
