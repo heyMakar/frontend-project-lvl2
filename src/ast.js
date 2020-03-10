@@ -2,62 +2,67 @@ import {
   union, has, keys, isObject,
 } from 'lodash';
 
-const getStatus = (dataBefore, dataAfter, key) => {
-  const valueBefore = dataBefore[key];
-  const valueAfter = dataAfter[key];
-  const isValueBeforeExist = has(dataBefore, key);
-  const isValueAfterExist = has(dataAfter, key);
-  if (isValueBeforeExist && !isValueAfterExist) {
-    return 'removed';
-  }
-  if (!isValueBeforeExist && isValueAfterExist) {
-    return 'added';
-  }
-  if (isObject(valueBefore) && isObject(valueAfter)) {
-    return 'nested';
-  }
-  if (isValueBeforeExist && isValueAfterExist && valueBefore !== valueAfter) {
-    return 'changed';
-  }
-  return 'unchanged';
-};
+const nodeActions = [
+  {
+    check: (dataBefore, dataAfter, key) => isObject(dataBefore[key]) && isObject(dataAfter[key]),
+    action: (dataBefore, dataAfter, key, f) => ({
+      key,
+      status: 'nested',
+      value: {},
+      children: [f(dataBefore, dataAfter)],
+    }),
+  },
+  {
+    check: (dataBefore, _dataAfter, key) => !has(dataBefore, key),
+    action: (_dataBefore, dataAfter, key) => ({
+      key,
+      status: 'added',
+      value: { [key]: dataAfter },
+      children: [],
+    }),
+  },
+  {
+    check: (_dataBefore, dataAfter, key) => !has(dataAfter, key),
+    action: (dataBefore, _dataAfter, key) => ({
+      key,
+      status: 'removed',
+      value: { [key]: dataBefore },
+      children: [],
+    }),
+  },
+  {
+    check: (dataBefore, dataAfter, key) => dataBefore[key] === dataAfter[key],
+    action: (dataBefore, _dataAfter, key) => ({
+      key,
+      status: 'unchanged',
+      value: { [key]: dataBefore },
+      children: [],
+    }),
+  },
+  {
+    check: (dataBefore, dataAfter, key) => dataBefore[key] !== dataAfter[key],
+    action: (dataBefore, dataAfter, key) => ({
+      key,
+      status: 'changed',
+      value: {
+        valueBefore: { [key]: dataBefore },
+        valueAfter: { [key]: dataAfter },
+      },
+      children: [],
+    }),
+  },
+];
 
-const getValueBasedOnStatus = (data1, data2, key) => {
-  const status = getStatus(data1, data2, key);
-  switch (status) {
-    case 'removed':
-      return { [key]: data1[key] };
-    case 'added':
-      return { [key]: data2[key] };
-    case 'changed':
-      return {
-        valueBefore: { [key]: data1[key] },
-        valueAfter: { [key]: data2[key] },
-      };
-    case 'unchanged':
-      return { [key]: data1[key] };
-    default:
-      return {};
-  }
-};
+const getNodeAction = (dataBefore, dataAfter, key) => nodeActions.find(
+  ({ check }) => check(dataBefore, dataAfter, key),
+);
 
 const astBuilder = (dataBefore, dataAfter) => {
-  const astBuild = (data1, data2) => {
-    const uniqKeys = union(keys(data1), keys(data2)).sort();
-    return uniqKeys.reduce((acc, key) => {
-      const status = getStatus(data1, data2, key);
-      const processedChildrens = status === 'nested'
-        ? astBuild(data1[key], data2[key]) : [];
-      return [...acc,
-        {
-          key,
-          status,
-          value: getValueBasedOnStatus(data1, data2, key),
-          children: [processedChildrens],
-        }];
-    }, []);
-  };
-  const ast = astBuild(dataBefore, dataAfter);
+  const uniqKeys = union(keys(dataBefore), keys(dataAfter)).sort();
+  const ast = uniqKeys.map((key) => {
+    const { action } = getNodeAction(dataBefore, dataAfter, key);
+    return action(dataBefore[key], dataAfter[key], key, astBuilder);
+  });
   return ast;
 };
 
