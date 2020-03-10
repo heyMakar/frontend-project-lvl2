@@ -11,9 +11,7 @@
           "value": {
             "follow": false
           },
-          "children": [
-            []
-          ]
+          "children": []
         },
         {
           "key": "setting1",
@@ -21,9 +19,7 @@
           "value": {
             "setting1": "Value 1"
           },
-          "children": [
-            []
-          ]
+          "children": []
         },
         {
           "key": "setting2",
@@ -31,9 +27,7 @@
           "value": {
             "setting2": "200"
           },
-          "children": [
-            []
-          ]
+          "children": []
         },
         {
           "key": "setting3",
@@ -48,9 +42,7 @@
               }
             }
           },
-          "children": [
-            []
-          ]
+          "children": []
         },
         {
           "key": "setting4",
@@ -58,9 +50,7 @@
           "value": {
             "setting4": "blah blah"
           },
-          "children": [
-            []
-          ]
+          "children": []
         },
         {
           "key": "setting5",
@@ -70,9 +60,7 @@
               "key5": "value5"
             }
           },
-          "children": [
-            []
-          ]
+          "children": []
         },
         {
           "key": "setting6",
@@ -86,9 +74,7 @@
                 "value": {
                   "key": "value"
                 },
-                "children": [
-                  []
-                ]
+                "children": []
               },
               {
                 "key": "ops",
@@ -96,9 +82,7 @@
                 "value": {
                   "ops": "vops"
                 },
-                "children": [
-                  []
-                ]
+                "children": []
               }
             ]
           ]
@@ -123,9 +107,7 @@
               "baz": "bars"
             }
           },
-          "children": [
-            []
-          ]
+          "children": []
         },
         {
           "key": "foo",
@@ -133,9 +115,7 @@
           "value": {
             "foo": "bar"
           },
-          "children": [
-            []
-          ]
+          "children": []
         },
         {
           "key": "nest",
@@ -150,9 +130,7 @@
               "nest": "str"
             }
           },
-          "children": [
-            []
-          ]
+          "children": []
         }
       ]
     ]
@@ -165,9 +143,7 @@
         "abc": "12345"
       }
     },
-    "children": [
-      []
-    ]
+    "children": []
   },
   {
     "key": "group3",
@@ -177,8 +153,6 @@
         "fee": "100500"
       }
     },
-    "children": [
-      []
-    ]
+    "children": []
   }
 ]
