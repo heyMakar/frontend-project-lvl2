@@ -20,7 +20,7 @@ const stringify = (obj, depth) => {
 
 const renderObject = (obj, depth = 0) => {
   const {
-    key, status, value, children, valueBefore, valueAfter,
+    key, status, value, children,
   } = obj;
   const breakLine = depth === 0 ? '' : '\n';
   switch (status) {
@@ -29,6 +29,7 @@ const renderObject = (obj, depth = 0) => {
     case 'removed':
       return `${breakLine}${placeIndent(depth)}  - ${key}: ${stringify(value, depth * 2)}`;
     case 'changed': {
+      const { valueBefore, valueAfter } = obj;
       const beforeDataToString = isObject(valueBefore)
         ? stringify(valueBefore, depth * 2) : valueBefore;
       const afterDataToString = isObject(valueAfter)
