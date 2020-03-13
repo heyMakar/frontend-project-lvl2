@@ -7,20 +7,20 @@ const placeIndent = (repeats) => {
   return tab.repeat(repeats);
 };
 
-const stringify = (obj, depth) => {
-  if (isObject(obj)) {
-    const firstKey = keys(obj)[0];
+const stringify = (data, depth) => {
+  if (isObject(data)) {
+    const firstKey = keys(data)[0];
     const nestedDepth = 2;
     const currentDepth = depth === 0 ? nestedDepth : depth;
     const breakLine = currentDepth === 0 ? '' : '\n';
-    return `{${breakLine}${placeIndent(currentDepth)}    ${firstKey}: ${obj[firstKey]}${breakLine}${placeIndent(currentDepth)}}`;
+    return `{${breakLine}${placeIndent(currentDepth)}    ${firstKey}: ${data[firstKey]}${breakLine}${placeIndent(currentDepth)}}`;
   }
-  return obj;
+  return data;
 };
 
 const renderObject = (obj, depth = 0) => {
   const {
-    key, status, value, children, valueBefore, valueAfter,
+    key, status, value, children,
   } = obj;
   const breakLine = depth === 0 ? '' : '\n';
   switch (status) {
@@ -29,6 +29,7 @@ const renderObject = (obj, depth = 0) => {
     case 'removed':
       return `${breakLine}${placeIndent(depth)}  - ${key}: ${stringify(value, depth * 2)}`;
     case 'changed': {
+      const { valueBefore, valueAfter } = obj;
       const beforeDataToString = isObject(valueBefore)
         ? stringify(valueBefore, depth * 2) : valueBefore;
       const afterDataToString = isObject(valueAfter)
