@@ -8,4 +8,4 @@ const formats = {
   json,
 };
 
-export default (type) => formats[type];
+export default (format) => formats[format];
