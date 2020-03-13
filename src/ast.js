@@ -8,8 +8,7 @@ const nodeActions = [
     action: (dataBefore, dataAfter, key, f) => ({
       key,
       status: 'nested',
-      value: {},
-      children: [f(dataBefore, dataAfter)],
+      children: f(dataBefore, dataAfter),
     }),
   },
   {
@@ -17,8 +16,7 @@ const nodeActions = [
     action: (_dataBefore, dataAfter, key) => ({
       key,
       status: 'added',
-      value: { [key]: dataAfter },
-      children: [],
+      value: dataAfter,
     }),
   },
   {
@@ -26,8 +24,7 @@ const nodeActions = [
     action: (dataBefore, _dataAfter, key) => ({
       key,
       status: 'removed',
-      value: { [key]: dataBefore },
-      children: [],
+      value: dataBefore,
     }),
   },
   {
@@ -35,8 +32,7 @@ const nodeActions = [
     action: (dataBefore, _dataAfter, key) => ({
       key,
       status: 'unchanged',
-      value: { [key]: dataBefore },
-      children: [],
+      value: dataBefore,
     }),
   },
   {
@@ -44,11 +40,8 @@ const nodeActions = [
     action: (dataBefore, dataAfter, key) => ({
       key,
       status: 'changed',
-      value: {
-        valueBefore: { [key]: dataBefore },
-        valueAfter: { [key]: dataAfter },
-      },
-      children: [],
+      valueBefore: dataBefore,
+      valueAfter: dataAfter,
     }),
   },
 ];
@@ -57,13 +50,13 @@ const getNodeAction = (dataBefore, dataAfter, key) => nodeActions.find(
   ({ check }) => check(dataBefore, dataAfter, key),
 );
 
-const astBuilder = (dataBefore, dataAfter) => {
+const buildAst = (dataBefore, dataAfter) => {
   const uniqKeys = union(keys(dataBefore), keys(dataAfter)).sort();
   const ast = uniqKeys.map((key) => {
     const { action } = getNodeAction(dataBefore, dataAfter, key);
-    return action(dataBefore[key], dataAfter[key], key, astBuilder);
+    return action(dataBefore[key], dataAfter[key], key, buildAst);
   });
   return ast;
 };
 
-export default astBuilder;
+export default buildAst;
