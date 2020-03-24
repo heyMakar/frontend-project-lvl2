@@ -1,64 +1,64 @@
-/* eslint-disable no-multi-spaces */
-
 import { keys, isObject } from 'lodash';
 
 const placeIndent = (repeats) => {
-  const  tab = '  ';
-  return tab.repeat(repeats);
+  const whiteSpace = ' ';
+  return whiteSpace.repeat(repeats);
 };
 
-const stringify = (data, depth) => {
-  if (isObject(data)) {
-    const firstKey = keys(data)[0];
-    const nestedDepth = 2;
-    const currentDepth = depth === 0 ? nestedDepth : depth;
-    const breakLine = currentDepth === 0 ? '' : '\n';
-    return `{${breakLine}${placeIndent(currentDepth)}    ${firstKey}: ${data[firstKey]}${breakLine}${placeIndent(currentDepth)}}`;
+const stringify = (key, value, depth) => {
+  const indent = placeIndent(depth);
+  if (!isObject(value)) {
+    return `\n${indent}${key}: ${value}`;
   }
-  return data;
+  const openBracketIndent = placeIndent(depth + 4);
+  const closeBracketIndent = placeIndent(depth + 2);
+  const indentedValue = keys(value)
+    .map((k) => (
+      `{\n${openBracketIndent}  ${k}: ${value[k]}\n${closeBracketIndent}}`
+    ));
+  return `\n${indent}${key}: ${indentedValue}`;
 };
 
-const renderObject = (obj, depth = 0) => {
-  const {
-    key, status, value, children,
-  } = obj;
-  const breakLine = depth === 0 ? '' : '\n';
-  switch (status) {
-    case 'added':
-      return `${breakLine}${placeIndent(depth)}  + ${key}: ${stringify(value, depth * 2)}`;
-    case 'removed':
-      return `${breakLine}${placeIndent(depth)}  - ${key}: ${stringify(value, depth * 2)}`;
-    case 'changed': {
-      const { valueBefore, valueAfter } = obj;
-      const beforeDataToString = isObject(valueBefore)
-        ? stringify(valueBefore, depth * 2) : valueBefore;
-      const afterDataToString = isObject(valueAfter)
-        ? stringify(valueAfter, depth * 2) : valueAfter;
+const nodeActions = [
+  {
+    check: (status) => status === 'added',
+    action: (node, depth) => stringify(`+ ${node.key}`, node.value, depth),
+  },
+  {
+    check: (status) => status === 'removed',
+    action: (node, depth) => stringify(`- ${node.key}`, node.value, depth),
+  },
+  {
+    check: (status) => status === 'changed',
+    action: (node, depth) => ([
+      stringify(`- ${node.key}`, node.valueBefore, depth),
+      stringify(`+ ${node.key}`, node.valueAfter, depth),
+    ]).join(''),
+  },
+  {
+    check: (status) => status === 'unchanged',
+    action: (node, depth) => stringify(`  ${node.key}`, node.value, depth),
+  },
+  {
+    check: (status) => status === 'nested',
+    action: (node, depth, f) => {
+      const closeBracketIndent = placeIndent(depth + 2);
+      const value = `{${f(node.children, depth + 4)}\n${closeBracketIndent}}`;
+      return stringify(`  ${node.key}`, value, depth);
+    },
+  },
+];
 
-      return `${breakLine}${placeIndent(depth)}  - ${key}: ${beforeDataToString}\n${placeIndent(depth)}  + ${key}: ${afterDataToString}`;
-    }
-    case 'unchanged':
-      return `${breakLine}${placeIndent(depth)}    ${key}: ${value}`;
-    case 'nested':
-      return `${breakLine}${placeIndent(depth)}    ${key}: {${children.map((c) => renderObject(c, depth * 2)).join('')}${breakLine}${placeIndent(depth)}    }`;
-    default:
-      return 'wrong status';
-  }
+const getNodeAction = (node) => nodeActions.find(({ check }) => check(node.status));
+
+const buildIndents = (items, depth = 2) => {
+  const tree = items.map((item) => {
+    const { action } = getNodeAction(item);
+    return action(item, depth, buildIndents);
+  });
+  return tree.join('');
 };
 
-const renderTree = (items) => {
-  const processedItems = items.reduce((acc, item) => {
-    const { key, children } = item;
-    const depth = 1;
-    const depthStep = 1;
-    if (children) {
-      const nestedDepth = depth + depthStep;
-      const renderedChilds = children.map((c) => renderObject(c, nestedDepth));
-      return [...acc, `${placeIndent(depth)}  ${key}: {${renderedChilds.join('')}\n${placeIndent(depth)}  }`];
-    }
-    return [...acc, renderObject(item)];
-  }, []);
-  return `{\n${processedItems.join('\n')}\n}`;
-};
+const renderTree = (tree) => `{${buildIndents(tree)}\n}`;
 
 export default renderTree;
